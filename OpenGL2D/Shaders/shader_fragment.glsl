@@ -1,13 +1,13 @@
 #version 430
 
-in		vec2 texturkoordinate;
-in		vec3 pixelposition;
-in		vec3 normalenvektor;
+in		vec2 vTexture;
+in		vec3 vPosition;
+in		vec3 vNormal;
 uniform sampler2D uTexture;
 
-out vec4 pixelfarbe;
+out vec4 color;
 
 void main()
 {
-	pixelfarbe = texture(uTexture, texturkoordinate);
+	color = texture(uTexture, vTexture);
 }

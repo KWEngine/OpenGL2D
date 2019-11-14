@@ -5,9 +5,9 @@ in		vec2 aTexture;
 in		vec3 aNormalTangent;
 in		vec3 aNormalBiTangent;
 
-out		vec3 normalenvektor;
-out		vec2 texturkoordinate;
-out		vec3 pixelposition;
+out		vec3 vNormal;
+out		vec2 vTexture;
+out		vec3 vPosition;
 
 uniform mat4 uModelMatrix;
 uniform mat4 uNormalMatrix;
@@ -15,9 +15,9 @@ uniform mat4 uMVP;
 
 void main()
 {
-	normalenvektor = normalize(vec3(uNormalMatrix * vec4(aNormal, 0.0)));
-	texturkoordinate = aTexture;
-	pixelposition = (uModelMatrix * vec4(aPosition, 1.0)).xyz;
+	vNormal = normalize(vec3(uNormalMatrix * vec4(aNormal, 0.0)));
+	vTexture = aTexture;
+	vPosition = (uModelMatrix * vec4(aPosition, 1.0)).xyz;
 
 	gl_Position = uMVP * vec4(aPosition, 1.0);
 }
