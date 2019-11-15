@@ -50,8 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Actor.cs" />
-    <Compile Include="Assets\Worlds\WorldExample.cs" />
-    <Compile Include="Assets\Actors\ActorExample.cs" />
+    <Compile Include="_Userspace\Worlds\WorldExample.cs" />
+    <Compile Include="_Userspace\Actors\ActorExample.cs" />
     <Compile Include="Core\World.cs" />
     <Compile Include="Geometry\GeoQuad.cs" />
     <Compile Include="Helpers\HelperTexture.cs" />
@@ -67,9 +67,11 @@
     <EmbeddedResource Include="Shaders\shader_vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Textures\example.jpg">
+    <Content Include="_Assets\info.txt" />
+    <Content Include="_Assets\Textures\example.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="_Userspace\info.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TexturesEmbedded\default.png" />

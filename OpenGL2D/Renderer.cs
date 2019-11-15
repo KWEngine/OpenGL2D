@@ -7,23 +7,29 @@ using System.Reflection;
 
 namespace OpenGL2D
 {
-    public class Renderer
+    /// <summary>
+    /// Renderer class
+    /// </summary>
+    public sealed class Renderer
     {
-        protected int mProgramId = -1;
-        protected int mShaderFragmentId = -1;
-        protected int mShaderVertexId = -1;
+        private int mProgramId = -1;
+        private int mShaderFragmentId = -1;
+        private int mShaderVertexId = -1;
 
-        protected int mAttribute_vpos = -1;
-        protected int mAttribute_vnormal = -1;
-        protected int mAttribute_vnormaltangent = -1;
-        protected int mAttribute_vnormalbitangent = -1;
-        protected int mAttribute_vtexture = -1;
+        private int mAttribute_vpos = -1;
+        private int mAttribute_vnormal = -1;
+        private int mAttribute_vnormaltangent = -1;
+        private int mAttribute_vnormalbitangent = -1;
+        private int mAttribute_vtexture = -1;
 
-        protected int mUniform_MVP = -1;
-        protected int mUniform_NormalMatrix = -1;
-        protected int mUniform_ModelMatrix = -1;
-        protected int mUniform_Texture = -1;
+        private int mUniform_MVP = -1;
+        private int mUniform_NormalMatrix = -1;
+        private int mUniform_ModelMatrix = -1;
+        private int mUniform_Texture = -1;
 
+        /// <summary>
+        /// Initializes the standard render program (shader compilation)
+        /// </summary>
         public Renderer()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -71,7 +77,14 @@ namespace OpenGL2D
 
         }
 
-        protected int LoadShader(Stream pFileStream, ShaderType pType, int pProgram)
+        /// <summary>
+        /// Loads a glsl shader file into memory
+        /// </summary>
+        /// <param name="pFileStream">file stream</param>
+        /// <param name="pType">shader type (vertex or fragment)</param>
+        /// <param name="pProgram">render program id</param>
+        /// <returns></returns>
+        private int LoadShader(Stream pFileStream, ShaderType pType, int pProgram)
         {
             int address = GL.CreateShader(pType);
             using (StreamReader sr = new StreamReader(pFileStream))
@@ -83,47 +96,23 @@ namespace OpenGL2D
             return address;
         }
 
+        /// <summary>
+        /// Renderer program id
+        /// </summary>
+        /// <returns></returns>
         public int GetProgramId()
         {
             return mProgramId;
         }
 
-        public int GetAttributeHandlePosition()
-        {
-            return mAttribute_vpos;
-        }
-
-        public int GetAttributeHandleNormals()
-        {
-            return mAttribute_vnormal;
-        }
-
-        public int GetAttributeHandleNormalTangents()
-        {
-            return mAttribute_vnormaltangent;
-        }
-
-        public int GetAttributeHandleNormalBiTangents()
-        {
-            return mAttribute_vnormalbitangent;
-        }
-
-        public int GetAttributeHandleTexture()
-        {
-            return mAttribute_vtexture;
-        }
-
-        public int GetUniformHandleMVP()
-        {
-            return mUniform_MVP;
-        }
-
-        public int GetUniformHandleTexture()
-        {
-            return mUniform_Texture;
-        }
-
-        public void Draw(GeoQuad quad, ref Matrix4 vp, ref Matrix4 normalMatrix, ref Matrix4 modelMatrix)
+        /// <summary>
+        /// Draws a given quad with the current view-projection-matrix 
+        /// </summary>
+        /// <param name="quad">quad instance</param>
+        /// <param name="vp">view-projection-matrix</param>
+        /// <param name="normalMatrix">the quad's normal matrix</param>
+        /// <param name="modelMatrix">the quad's model matrix</param>
+        internal void Draw(GeoQuad quad, ref Matrix4 vp, ref Matrix4 normalMatrix, ref Matrix4 modelMatrix)
         {
             Matrix4 mvp = modelMatrix * vp;
             GL.UniformMatrix4(mUniform_MVP, false, ref mvp);

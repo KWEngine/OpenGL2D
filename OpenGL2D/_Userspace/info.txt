@@ -1,0 +1,1 @@
+﻿This folder contains compilable subclasses of the abstract core classes (i.e. Actor and World) that will be implemented by the user.

@@ -51,11 +51,21 @@ namespace OpenGL2D.Core
             _scale.Z = 1;
         }
 
+        public void SetScale(Vector2 s)
+        {
+            SetScale(s.X, s.Y);
+        }
+
         public void SetPosition(float x, float y)
         {
             _position.X = x;
             _position.Y = y;
             _position.Z = 0;
+        }
+
+        public void SetPosition(Vector2 pos)
+        {
+            SetPosition(pos.X, pos.Y);
         }
 
         public void SetRotation(float rotationDegrees)

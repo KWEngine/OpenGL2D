@@ -12,6 +12,9 @@ using System.Windows.Forms;
 
 namespace OpenGL2D
 {
+    /// <summary>
+    /// Window class for this engine
+    /// </summary>
     public sealed class MainWindow : GameWindow
     {
         private Matrix4 _viewMatrix = new Matrix4();
@@ -24,6 +27,9 @@ namespace OpenGL2D
         private Renderer _renderProgram;
         private World _currentWorld = null;
 
+        /// <summary>
+        /// ID of default texture
+        /// </summary>
         public int DefaultTexture
         {
             get
@@ -32,6 +38,9 @@ namespace OpenGL2D
             }
         }
 
+        /// <summary>
+        /// Reference to the main window
+        /// </summary>
         public static MainWindow Window
         {
             get
@@ -40,6 +49,9 @@ namespace OpenGL2D
             }
         }
 
+        /// <summary>
+        /// Reference to the render program (shader program)
+        /// </summary>
         public Renderer RenderProgram
         {
             get
@@ -48,9 +60,14 @@ namespace OpenGL2D
             }
         }
 
-        public MainWindow(int w, int h)
-            : base(w,
-                h,
+        /// <summary>
+        /// Initializes the main game window
+        /// </summary>
+        /// <param name="width">window width</param>
+        /// <param name="height">window height</param>
+        public MainWindow(int width, int height)
+            : base(width,
+                height,
                 GraphicsMode.Default,
                 "OpenGL2D Setup", 
                 GameWindowFlags.Default,
@@ -66,6 +83,10 @@ namespace OpenGL2D
             Y = Screen.PrimaryScreen.WorkingArea.Height / 2 - Height / 2;
         }
 
+        /// <summary>
+        /// Game render logic
+        /// </summary>
+        /// <param name="e">Stopwatch event</param>
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             if (!Focused)
@@ -91,6 +112,10 @@ namespace OpenGL2D
 
         }
 
+        /// <summary>
+        /// Game render logic
+        /// </summary>
+        /// <param name="e">stopwatch event</param>
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
@@ -114,6 +139,10 @@ namespace OpenGL2D
             return _viewProjectionMatrix;
         }
 
+        /// <summary>
+        /// Loading of basic assets and setup
+        /// </summary>
+        /// <param name="e">Event arguments</param>
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -128,7 +157,7 @@ namespace OpenGL2D
 
             GL.UseProgram(_renderProgram.GetProgramId());
 
-            _defaultTextureId = HelperTexture.LoadTexture("default.png");
+            _defaultTextureId = HelperTexture.LoadTextureFromAssembly("default.png");
 
             Color4 backColor = new Color4();
             backColor.A = 1.0f;
@@ -140,6 +169,9 @@ namespace OpenGL2D
             LoadDefaultWorld();
         }
 
+        /// <summary>
+        /// Loads the example world as first world
+        /// </summary>
         private void LoadDefaultWorld()
         {
             _currentWorld = new WorldExample();
@@ -148,6 +180,10 @@ namespace OpenGL2D
             _currentWorld.SortActorList();
         }
 
+        /// <summary>
+        /// Resizes the projection matrix when window gets resized
+        /// </summary>
+        /// <param name="e">Event arguments</param>
         protected override void OnResize(EventArgs e)
         {
             _projectionMatrix = Matrix4.CreateOrthographicOffCenter(0, Width, Height,0, -1, 1);

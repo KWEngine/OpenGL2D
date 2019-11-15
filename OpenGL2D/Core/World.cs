@@ -4,6 +4,10 @@ using System.Collections.ObjectModel;
 
 namespace OpenGL2D.Core
 {
+
+    /// <summary>
+    /// World template class
+    /// </summary>
     abstract class World
     {
         private int _worldActorId = 0;

@@ -3,7 +3,10 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace OpenGL2D.Geometry
 {
-    public class GeoQuad
+    /// <summary>
+    /// Geometry class for a quad (two triangles)
+    /// </summary>
+    internal class GeoQuad
     {
         public GeoQuad()
         {

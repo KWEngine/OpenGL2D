@@ -7,9 +7,17 @@ using System.Reflection;
 
 namespace OpenGL2D.Helpers
 {
+    /// <summary>
+    /// Helper class for texture handling
+    /// </summary>
     class HelperTexture
     {
-        public static int LoadTexture(string imagefile)
+        /// <summary>
+        /// Loads an embedded image from the Helpers folder (image files must be marked "embedded resource")
+        /// </summary>
+        /// <param name="imagefile">file name</param>
+        /// <returns>OpenGL texture id for given image</returns>
+        public static int LoadTextureFromAssembly(string imagefile)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             string resource = "OpenGL2D.TexturesEmbedded." + imagefile;
@@ -59,6 +67,13 @@ namespace OpenGL2D.Helpers
             return texID;
         }
 
+        /// <summary>
+        /// Loads an embedded image from the executable's folder
+        /// </summary>
+        /// <param name="imagefile">file name</param>
+        /// <param name="width">image width</param>
+        /// <param name="height">image height</param>
+        /// <returns>OpenGL texture id for given image</returns>
         public static int LoadTextureFromDisk(string imagefile, out int width, out int height)
         {
             int texID = -1;
