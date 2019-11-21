@@ -186,6 +186,7 @@ namespace OpenGL2D
         /// <param name="e">Event arguments</param>
         protected override void OnResize(EventArgs e)
         {
+            GL.Viewport(ClientRectangle);
             _projectionMatrix = Matrix4.CreateOrthographicOffCenter(0, Width, Height,0, 0.1f, 100f);
         }
     }
