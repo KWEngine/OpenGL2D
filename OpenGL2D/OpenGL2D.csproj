@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Actor.cs" />
+    <Compile Include="Helpers\HelperGL.cs" />
+    <Compile Include="RendererBloom.cs" />
     <Compile Include="_Userspace\Worlds\WorldExample.cs" />
     <Compile Include="_Userspace\Actors\ActorExample.cs" />
     <Compile Include="Core\World.cs" />
@@ -65,6 +67,8 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="Shaders\shader_fragment.glsl" />
     <EmbeddedResource Include="Shaders\shader_vertex.glsl" />
+    <EmbeddedResource Include="Shaders\shader_vertex_bloom.glsl" />
+    <EmbeddedResource Include="Shaders\shader_fragment_bloom.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="_Assets\info.txt" />

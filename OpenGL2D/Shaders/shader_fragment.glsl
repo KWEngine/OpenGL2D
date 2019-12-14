@@ -16,12 +16,19 @@ in		vec3 vNormal;
 // this is the texture uniform that you upload to the shader:
 uniform sampler2D uTexture;
 
-// the output variable (rgba)
+// tells the shader which color needs to go to the bloom texture:
+uniform vec4 uBloom;
+
+// the output variables (rgba)
 out vec4 color;
+out vec4 bloom;
 
 void main()
 {
 	// texture() determines which part of the texture must
 	// be painted on the current pixel:
 	color = texture(uTexture, vTexture);
+
+	// draw the bloom color to the second texture output:
+	bloom = vec4(uBloom.xyz, color.w * uBloom.w);
 }

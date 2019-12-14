@@ -10,32 +10,30 @@ namespace OpenGL2D
     /// <summary>
     /// Renderer class
     /// </summary>
-    public sealed class Renderer
+    public sealed class RendererBloom
     {
         private int mProgramId = -1;
         private int mShaderFragmentId = -1;
         private int mShaderVertexId = -1;
 
         private int mAttribute_vpos = -1;
-        private int mAttribute_vnormal = -1;
-        private int mAttribute_vnormaltangent = -1;
-        private int mAttribute_vnormalbitangent = -1;
         private int mAttribute_vtexture = -1;
 
         private int mUniform_MVP = -1;
-        private int mUniform_NormalMatrix = -1;
-        private int mUniform_ModelMatrix = -1;
-        private int mUniform_Texture = -1;
-        private int mUniform_Bloom = -1;
+        private int mUniform_TextureBloom = -1;
+        private int mUniform_TextureScene = -1;
+        private int mUniform_Merge = -1;
+        private int mUniform_Horizontal = -1;
+        private int mUniform_Resolution = -1;
 
         /// <summary>
         /// Initializes the standard render program (shader compilation)
         /// </summary>
-        public Renderer()
+        public RendererBloom()
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            string resourceNameVertexShader = "OpenGL2D.Shaders.shader_vertex.glsl";
-            string resourceNameFragmentShader = "OpenGL2D.Shaders.shader_fragment.glsl";
+            string resourceNameVertexShader = "OpenGL2D.Shaders.shader_vertex_bloom.glsl";
+            string resourceNameFragmentShader = "OpenGL2D.Shaders.shader_fragment_bloom.glsl";
 
             mProgramId = GL.CreateProgram();
             using (Stream s = assembly.GetManifestResourceStream(resourceNameVertexShader))
@@ -54,13 +52,9 @@ namespace OpenGL2D
             if (mShaderFragmentId >= 0 && mShaderVertexId >= 0)
             {
                 GL.BindAttribLocation(mProgramId, 0, "aPosition");
-                GL.BindAttribLocation(mProgramId, 1, "aNormal");
                 GL.BindAttribLocation(mProgramId, 2, "aTexture");
-                GL.BindAttribLocation(mProgramId, 3, "aNormalTangent");
-                GL.BindAttribLocation(mProgramId, 4, "aNormalBiTangent");
                 
                 GL.BindFragDataLocation(mProgramId, 0, "color");
-                GL.BindFragDataLocation(mProgramId, 1, "bloom");
 
                 GL.LinkProgram(mProgramId);
             }
@@ -71,14 +65,13 @@ namespace OpenGL2D
 
             mAttribute_vpos = GL.GetAttribLocation(mProgramId, "aPosition");
             mAttribute_vtexture = GL.GetAttribLocation(mProgramId, "aTexture");
-            mAttribute_vnormal = GL.GetAttribLocation(mProgramId, "aNormal");
-            mAttribute_vnormaltangent = GL.GetAttribLocation(mProgramId, "aNormalTangent");
-            mAttribute_vnormalbitangent = GL.GetAttribLocation(mProgramId, "aNormalBiTangent");
-            mUniform_MVP = GL.GetUniformLocation(mProgramId, "uMVP"); // MVP = model-view-projection matrix
-            mUniform_NormalMatrix = GL.GetUniformLocation(mProgramId, "uNormalMatrix"); // Points to the normal matrix
-            mUniform_ModelMatrix = GL.GetUniformLocation(mProgramId, "uModelMatrix"); // Points to the normal matrix
-            mUniform_Texture = GL.GetUniformLocation(mProgramId, "uTexture"); // Points to a texture
-            mUniform_Bloom = GL.GetUniformLocation(mProgramId, "uBloom");
+
+            mUniform_MVP = GL.GetUniformLocation(mProgramId, "uMVP");
+            mUniform_TextureScene = GL.GetUniformLocation(mProgramId, "uTextureScene");
+            mUniform_TextureBloom = GL.GetUniformLocation(mProgramId, "uTextureBloom");
+            mUniform_Merge = GL.GetUniformLocation(mProgramId, "uMerge");
+            mUniform_Horizontal = GL.GetUniformLocation(mProgramId, "uHorizontal");
+            mUniform_Resolution = GL.GetUniformLocation(mProgramId, "uResolution");
         }
 
         /// <summary>
@@ -112,22 +105,33 @@ namespace OpenGL2D
         /// <summary>
         /// Draws a given quad with the current view-projection-matrix 
         /// </summary>
-        /// <param name="quad">quad instance</param>
-        /// <param name="vp">view-projection-matrix</param>
-        /// <param name="normalMatrix">the quad's normal matrix</param>
-        /// <param name="modelMatrix">the quad's model matrix</param>
-        internal void Draw(GeoQuad quad, ref Matrix4 vp, ref Matrix4 normalMatrix, ref Matrix4 modelMatrix, ref Vector4 bloom)
+        /// <param name="quad">The quad to be rendered</param>
+        /// <param name="mvp">the bloom model-view-projection matrix</param>
+        /// <param name="bloomDirectionHorizontal">true if bloom is applied horizontally</param>
+        /// <param name="merge">true if bloom will be merged with original scene</param>
+        internal void DrawBloom(GeoQuad quad, ref Matrix4 mvp, bool bloomDirectionHorizontal, bool merge, int width, int height, int sceneTexture, int bloomTexture)
         {
-            Matrix4 mvp = modelMatrix * vp;
             GL.UniformMatrix4(mUniform_MVP, false, ref mvp);
-            GL.UniformMatrix4(mUniform_NormalMatrix, false, ref normalMatrix);
-            GL.UniformMatrix4(mUniform_ModelMatrix, false, ref modelMatrix);
 
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, quad.mTextureHandle);
-            GL.Uniform1(mUniform_Texture, 0);
+            GL.BindTexture(TextureTarget.Texture2D, bloomTexture);
+            GL.Uniform1(mUniform_TextureBloom, 0);
 
-            GL.Uniform4(mUniform_Bloom, ref bloom);
+            if (merge)
+            {
+                GL.ActiveTexture(TextureUnit.Texture1);
+                GL.BindTexture(TextureTarget.Texture2D, sceneTexture);
+                GL.Uniform1(mUniform_TextureScene, 1);
+
+                GL.Uniform1(mUniform_Merge, 1);
+            }
+            else
+            {
+                GL.Uniform1(mUniform_Merge, 0);
+            }
+            
+            GL.Uniform1(mUniform_Horizontal, bloomDirectionHorizontal ? 1 : 0);
+            GL.Uniform2(mUniform_Resolution, (float)width, (float)height);
 
             GL.BindVertexArray(GeoQuad.VAO);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);

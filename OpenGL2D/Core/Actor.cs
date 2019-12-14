@@ -20,6 +20,7 @@ namespace OpenGL2D.Core
         private Quaternion _rotation = new Quaternion(0, 0, 0, 1);
         private float _rotationDegrees = 0;
         private Vector3 _scale = new Vector3(256, 256, 1);
+        private Vector4 _bloom = new Vector4(0, 0, 0, 0);
 
         public Vector2 GetScale()
         {
@@ -74,6 +75,14 @@ namespace OpenGL2D.Core
             _rotation = Quaternion.FromAxisAngle(Vector3.UnitZ, MathHelper.DegreesToRadians(rotationDegrees % 360));
         }
 
+        public void SetBloom(float red, float green, float blue, float intensity)
+        {
+            _bloom.X = HelperGL.Clamp(red, 0, 1);
+            _bloom.Y = HelperGL.Clamp(green, 0, 1);
+            _bloom.Z = HelperGL.Clamp(blue, 0, 1);
+            _bloom.W = HelperGL.Clamp(intensity, 0, 1);
+        }
+
         public void SetTexture(string texture)
         {
             _quad.SetTexture(HelperTexture.LoadTextureFromDisk(texture, out int w, out int h));
@@ -114,7 +123,8 @@ namespace OpenGL2D.Core
             _modelMatrix = Matrix4.CreateScale(_scale) * Matrix4.CreateFromQuaternion(_rotation) * Matrix4.CreateTranslation(_position);
             _normalMatrix = Matrix4.Invert(Matrix4.Transpose(_modelMatrix));
             Matrix4 currentViewProjectionMatrix = CurrentWindow.GetViewProjectionMatrix();
-            CurrentWindow.RenderProgram.Draw(_quad, ref currentViewProjectionMatrix, ref _normalMatrix, ref _modelMatrix);
+
+            CurrentWindow.RenderProgram.Draw(_quad, ref currentViewProjectionMatrix, ref _normalMatrix, ref _modelMatrix, ref _bloom);
         }
     }
 }
