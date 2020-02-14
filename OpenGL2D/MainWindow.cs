@@ -150,7 +150,7 @@ namespace OpenGL2D
         {
             GL.UseProgram(_renderProgramBloom.GetProgramId());
 
-            int loopCount = 2; // must 2, 4, 6 or 8, but 4 will suffice
+            int loopCount = 4; // must be %2==0, but 4 will suffice
             int sourceTex; // this is the texture that the bloom will be read from
             for(int i = 0; i < loopCount; i++)
             {
